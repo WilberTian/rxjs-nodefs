@@ -30,13 +30,49 @@
 
     
     
-    var readFileAsObservable = Rx.Observable.bindNodeCallback(fs.readfile);
-    var writeFileAsObservable =  Rx.Observable.bindNodeCallback(fs.writeFile);
-    var forceWriteFileAsObservable = (path, file) => forceMkdirAsObservable(path, true)
-                                                                                .ignoreElements()
-                                                                                .concat(writeFileAsObservable(path, file));
-    var rmFileAsObservable = Rx.Observable.bindNodeCallback(fs.unlink);
+    var readFileAsObservable = (path, encoding) => Rx.Observable.create(function(observer) {
+        if(encoding === void(0)) encoding = 'utf-8';
+        
+        var cb = (e, data) => {
+            if(e)  observer.error(e);
 
+            observer.next(data);
+            observer.complete();
+        };
+        
+        fs.readFile(path, encoding, cb);
+        
+    });
+    Rx.Observable.bindNodeCallback(fs.readFile);
+    var writeFileAsObservable = (path, data) => Rx.Observable.create(function(observer) {
+        var cb = (e) => {
+            if(e)  observer.error(e);
+
+            observer.next({
+                path: path, 
+                data: data
+            });
+            observer.complete();
+        };
+        
+        fs.writeFile(path, data, cb);
+        
+    });
+    var forceWriteFileAsObservable = (path, data) => forceMkdirAsObservable(path)
+                                                                                .ignoreElements()
+                                                                                .concat(writeFileAsObservable(path, data));
+    var rmFileAsObservable = (path) => Rx.Observable.create(function(observer) {
+        var cb = (e) => {
+            if(e)  observer.error(e);
+
+            observer.next(path);
+            observer.complete();
+        };
+        
+        fs.unlink(path, cb);
+    });
+
+    
 
 
     var readDirAsObservable = (path) => Rx.Observable.create(function(observer) {
@@ -65,15 +101,27 @@
                             fsObj => (fsObj.stats.isDirectory() && depth > 0) ? readDirWithStatsAsObservable(fsObj.path) : Rx.Observable.empty()
                         );
     };
-    var mkdirAsObservable = Rx.Observable.bindNodeCallback(fs.mkdir);
+    var mkdirAsObservable = (path) => Rx.Observable.create(function(observer) {
+        var cb = (e) => {
+            if(e)  observer.error(e);
+            
+            observer.next(path);
+            observer.complete();
+        };
+        
+        fs.mkdir(path, cb);
+    });
     var forceMkdirAsObservable = (path) => {
         var dirs = path.split('/');
-        if(dirs[0] === '.') dirs.pop();
+        if(dirs[0] === '.') {
+            dirs.shift();
+            dirs.pop();
+        }
         
         return Rx.Observable.from(dirs)
-                        .scan((a, b) => a + '/' + b)
+                        .scan((a, b) => a + '/' + b, '.')
                         .mergeMap(mkdirAsObservable)
-                        .onErrorResumeNext(Rx.Observable.empty());
+                        .onErrorResumeNext(x => console.log(x));
     };
     var rmdirAsObservable = Rx.Observable.bindNodeCallback(fs.rmdir);
     var forceRmdirAsObservable = (path) => {
