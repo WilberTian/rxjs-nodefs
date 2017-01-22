@@ -1,0 +1,17 @@
+{
+  "name": "rxjs-nodefs",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {},
+  "dependencies": {
+    "rxjs": "^5.0.3",
+    "underscore": "^1.8.3"
+  }
+}
