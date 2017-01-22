@@ -1,6 +1,6 @@
 var rxfs = require('./rxjs-nodefs');
 var Rx = require('rxjs/Rx');
-                                                                                                                                /*
+
 // create a file
 rxfs.writeFileAsObservable('a.txt', 'content in a.txt')
         .mergeMap(file => rxfs.fileStatAsObservable(file.path))
@@ -68,15 +68,28 @@ rxfs.mkdirAsObservable('./d')
 rxfs.mkdirAsObservable('./e/f')
         .subscribe(x => console.log(x), e => console.error(e));           
     
-    */
+    
     
 
+
 // create a directory with directories include this directory 
-rxfs.forceMkdirAsObservable('./e/ee/f</')
-        .subscribe(x => console.log('i' + x), e => console.log('e' + e));   
+rxfs.forceMkdirAsObservable('./e/f/g/h/i/j')
+        .subscribe(x => console.log(x), e => console.log(e));   
+
+
+
 
 // delete an empty directory
+rxfs.rmdirAsObservable('./e/f/g/')
+        .subscribe(x => console.log(x), e => console.log(e));   
+
+rxfs.rmdirAsObservable('./e/')
+        .subscribe(x => console.log(x), e => console.log(e));         
+
 
 
 // force delete an directory and items in this directory
+rxfs.forceRmdirAsObservable('./e')
+        .subscribe(x => console.log(x), e => console.log(e));  
+
 

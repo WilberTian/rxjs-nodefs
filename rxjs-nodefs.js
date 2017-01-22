@@ -113,15 +113,21 @@
     });
     var forceMkdirAsObservable = (path) => {
         var dirs = path.split('/');
-        if(dirs[0] === '.') {
-            dirs.shift();
-            dirs.pop();
-        }
         
+        
+        var source = (_path) => mkdirAsObservable(_path).catch(function(e){
+            if(e.code === 'EEXIST') {
+                return (path === _path) ? Rx.Observable.of(path) : Rx.Observable.empty();
+            }
+            
+            return Rx.Observable.of(e);
+        });
+
+
         return Rx.Observable.from(dirs)
-                        .scan((a, b) => a + '/' + b, '.')
-                        .mergeMap(mkdirAsObservable)
-                        .onErrorResumeNext(x => console.log(x));
+                        .scan((a, b) => a + '/' + b)
+                        .mergeMap(source, null, 1);
+                        
     };
     var rmdirAsObservable = Rx.Observable.bindNodeCallback(fs.rmdir);
     var forceRmdirAsObservable = (path) => {
