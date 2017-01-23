@@ -1,6 +1,6 @@
 var rxfs = require('./rxjs-nodefs');
 var Rx = require('rxjs/Rx');
-
+/*
 // create a file
 rxfs.writeFileAsObservable('a.txt', 'content in a.txt')
         .mergeMap(file => rxfs.fileStatAsObservable(file.path))
@@ -16,7 +16,10 @@ rxfs.writeFileAsObservable('./b/b.txt', 'content in b.txt')
 // create a file with directories include this file
 rxfs.forceWriteFileAsObservable('./b/b.txt', 'content in b.txt')
         .subscribe(x => console.log(x), e => console.error(e));     
-
+*/
+        
+        /*
+        
 var subFiles = ['./b/b1.txt', './b/b2.txt', './b/b3.txt', './b/b4.txt', './b/c/c1.txt', './b/c/c2.txt']       
 Rx.Observable.from(subFiles)
         .mergeMap((path) => rxfs.forceWriteFileAsObservable(path, 'content in ' + path))
@@ -40,24 +43,24 @@ rxfs.rmFileAsObservable('./b/b.txt')
         
                                                                                                                                                         
 // list items in a directory
-rxfs.readDirAsObservable('./b')
-        .subscribe(x => console.log(x), e => console.error(e));    
+rxfs.walkDirAsObservable('./test')
+        .subscribe(x => console.log(x.name), e => console.error(e));    
 
-        
-        
+   
         
 // walk a directory to list all the items and items in sub-directory
 // use depth to control the walk depth of directory
 rxfs.walkDirAsObservable('./b', 1)
         .subscribe(x => console.log(x), e => console.error(e));    
-
+*/     
+       
         
-rxfs.walkDirAsObservable('./b', 2)
+rxfs.walkDirAsObservable('./', 5)
         .map(fsObj => ({name: fsObj.name, path: fsObj.path, isDir: fsObj.stats.isDirectory()}))
         .subscribe(x => console.log(x), e => console.error(e));            
         
         
-        
+       /*  
                                                                                                                                                                     
         
 // create a directory
@@ -93,3 +96,4 @@ rxfs.forceRmdirAsObservable('./e')
         .subscribe(x => console.log(x), e => console.log(e));  
 
 
+*/

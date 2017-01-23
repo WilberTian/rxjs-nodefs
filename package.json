@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-     "start": "node tests.js"
+    "start": "node tests.js",
+    "test": "mocha ./test/dir.test.js || exit 0"
   },
   "repository": {
     "type": "git",
@@ -13,6 +14,8 @@
   "license": "",
   "devDependencies": {},
   "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
     "rxjs": "^5.0.3",
     "underscore": "^1.8.3"
   }
