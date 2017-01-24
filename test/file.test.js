@@ -1,4 +1,6 @@
 var rxfs = require('../rxjs-nodefs');
+var rimraf = require('rimraf');
+var fs = require('fs');
 var expect = require('chai').expect;
 
 var tempDir = './test/temp/';
@@ -16,8 +18,10 @@ var fileB = {
 
 describe('file api test', function() {
     before(function(){
-        console.log('create temp folder before test: ' + tempDir)
-    })
+        rimraf.sync(tempDir, {});
+        fs.mkdirSync(tempDir);
+        console.log('clean up before test, folder: ' + tempDir)
+    });
     
     it('writeFileAsObservable - write/create file', function(done) {
         rxfs.writeFileAsObservable(fileA.path, fileA.data)
@@ -83,6 +87,7 @@ describe('file api test', function() {
     });
     
     after(function(){
-        console.log('remove temp folder after test: ' + tempDir)
-    })
+        rimraf.sync(tempDir, {});
+        console.log('clean up after test, folder: ' + tempDir)
+    });
 });

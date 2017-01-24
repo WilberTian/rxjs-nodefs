@@ -1,13 +1,20 @@
 var rxfs = require('../rxjs-nodefs');
+var rimraf = require('rimraf');
+var fs = require('fs');
 var expect = require('chai').expect;
 
-var testDir = './test/temp';
-var dirA = testDir + '/a';
-var dirB = testDir + '/b';
-var dirB_C_D = testDir + '/b/c/d';
+var tempDir = './test/temp';
+var dirA = tempDir + '/a';
+var dirB = tempDir + '/b';
+var dirB_C_D = tempDir + '/b/c/d';
 
 describe('dir api test', function() {
-
+    before(function(){
+        rimraf.sync(tempDir, {});
+        fs.mkdirSync(tempDir);
+        console.log('clean up before test, folder: ' + tempDir)
+    });
+    
     it('mkdirAsObservable - create a directory', function(done) {
         rxfs.mkdirAsObservable(dirA)
             .subscribe(x => {
@@ -49,7 +56,7 @@ describe('dir api test', function() {
     it('readDirAsObservable - list items in a directory', function(done) {
         var items =[];
         
-        rxfs.readDirAsObservable(testDir)
+        rxfs.readDirAsObservable(tempDir)
             .subscribe(x => {
                 items.push(x);
             }, e => {
@@ -65,14 +72,13 @@ describe('dir api test', function() {
     it('walkDirAsObservable - walk a directory to list all the items and items in sub-directory', function(done) {
         var items =[];
         
-        rxfs.walkDirAsObservable(testDir, 1)
+        rxfs.walkDirAsObservable(tempDir, 1)
             .subscribe(x => {
                 items.push(x);
             }, e => {
                 console.log(e);
             },
             () => {
-                console.log(items.length)
                 expect(items.length).to.equal(2);
                 done();
             }); 
@@ -82,14 +88,14 @@ describe('dir api test', function() {
     it('walkDirAsObservable - walk a directory to list all the items and items in sub-directory', function(done) {
         var items =[];
         
-        rxfs.walkDirAsObservable(testDir, 2)
+        rxfs.walkDirAsObservable(tempDir, 2)
             .subscribe(x => {
                 items.push(x);
             }, e => {
                 console.log(e);
             },
-            () => { console.log(items.length)
-                expect(items.length).to.equal(2);
+            () => { 
+                expect(items.length).to.equal(4);
                 done();
             }); 
         
@@ -121,13 +127,18 @@ describe('dir api test', function() {
         
         rxfs.forceRmdirAsObservable(dirB)
             .subscribe(x => {
-                console.log(x)
-                expect(x).to.equal(dirA);
-                done();
+                items.push(x)
             }, e => {
                 console.log(e);
+            }, () => {
+                expect(items.length).to.equal(3);
+                done();
             }); 
         
     });
     
+    after(function(){
+        rimraf.sync(tempDir, {});
+        console.log('clean up after test, folder: ' + tempDir)
+    });
 });

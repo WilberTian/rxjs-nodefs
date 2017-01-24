@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "start": "node tests.js",
-    "test": "mocha ./test/dir.test.js || exit 0"
+    "test": "mocha ./test/file.test.js ./test/dir.test.js || exit 0",
+    "test-file": "mocha ./test/file.test.js || exit 0",
+    "test-dir": "mocha ./test/dir.test.js || exit 0"
   },
   "repository": {
     "type": "git",
