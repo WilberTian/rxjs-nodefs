@@ -89,18 +89,20 @@
         
     });
     var walkDirAsObservable = (path, depth) => {
-        if(isNaN(depth)) depth = 1;
+        if(isNaN(depth)) depth = 0;
         
-        var readDirWithStatsAsObservable = (path) => {
-            depth -= 1;
+        var readDirWithStatsAsObservable = (path, _depth) => {
             return readDirAsObservable(path)
-                        .mergeMap(path => fileStatAsObservable(path));
+                            .mergeMap(path => fileStatAsObservable(path))
+                            .mergeMap(fsObj => Rx.Observable.create(obs => {
+                                                                                                                _.extend(fsObj, {depth: _depth + 1})
+                                                                                                                obs.next(fsObj)}))
         }
         
-        return readDirWithStatsAsObservable(path)
-                    .expand(
-                        fsObj => (fsObj.stats.isDirectory() && depth > 0) ? readDirWithStatsAsObservable(fsObj.path) : Rx.Observable.empty()
-                    );
+        return readDirWithStatsAsObservable(path, 0)
+                        .expand(
+                            fsObj => (fsObj.stats.isDirectory() && fsObj.depth <= depth) ? readDirWithStatsAsObservable(fsObj.path, fsObj.depth) : Rx.Observable.empty()
+                        );
     };
     var mkdirAsObservable = (path) => Rx.Observable.create(function(observer) {
         var cb = (e) => {
