@@ -72,7 +72,7 @@ describe('dir api test', function() {
     it('walkDirAsObservable - walk a directory to list all the items and items in sub-directory', function(done) {
         var items =[];
         
-        rxfs.walkDirAsObservable(tempDir, 1)
+        rxfs.walkDirAsObservable(tempDir, 0)
             .subscribe(x => {
                 items.push(x);
             }, e => {

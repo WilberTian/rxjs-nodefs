@@ -95,8 +95,10 @@
             return readDirAsObservable(path)
                             .mergeMap(path => fileStatAsObservable(path))
                             .mergeMap(fsObj => Rx.Observable.create(obs => {
-                                                                                                                _.extend(fsObj, {depth: _depth + 1})
-                                                                                                                obs.next(fsObj)}))
+                                                                                _.extend(fsObj, {depth: _depth + 1});
+                                                                                obs.next(fsObj);
+                                                                                obs.complete();
+                                                                            }))
         }
         
         return readDirWithStatsAsObservable(path, 0)
