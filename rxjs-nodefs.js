@@ -12,7 +12,7 @@
     var fileStatAsObservable = (path) => Rx.Observable.create(function(observer) {
         
         var cb = (e, stats) => {
-            if(e)  observer.error(e);
+            if(e) observer.error(e);
             
             observer.next({
                 extension: Path.extname(path),
@@ -34,7 +34,7 @@
         if(encoding === void(0)) encoding = 'utf-8';
         
         var cb = (e, data) => {
-            if(e)  observer.error(e);
+            if(e) observer.error(e);
 
             observer.next(data);
             observer.complete();
@@ -43,10 +43,9 @@
         fs.readFile(path, encoding, cb);
         
     });
-    Rx.Observable.bindNodeCallback(fs.readFile);
     var writeFileAsObservable = (path, data) => Rx.Observable.create(function(observer) {
         var cb = (e) => {
-            if(e)  observer.error(e);
+            if(e) observer.error(e);
 
             observer.next({
                 path: path, 
@@ -59,11 +58,11 @@
         
     });
     var forceWriteFileAsObservable = (path, data) => forceMkdirAsObservable(Path.dirname(path))
-                                                                                .ignoreElements()
-                                                                                .concat(writeFileAsObservable(path, data));
+                                                        .ignoreElements()
+                                                        .concat(writeFileAsObservable(path, data));
     var rmFileAsObservable = (path) => Rx.Observable.create(function(observer) {
         var cb = (e) => {
-            if(e)  observer.error(e);
+            if(e) observer.error(e);
 
             observer.next(path);
             observer.complete();
@@ -77,7 +76,7 @@
 
     var readDirAsObservable = (path) => Rx.Observable.create(function(observer) {
         var cb = (e, items) => {
-            if(e)  observer.error(e);
+            if(e) observer.error(e);
 
             items = _.map(items, _.partial((a, b) => a + '/' + b, path));
             _.each(items, item => observer.next(item));
@@ -93,18 +92,18 @@
         
         var readDirWithStatsAsObservable = (path, _depth) => {
             return readDirAsObservable(path)
-                            .mergeMap(path => fileStatAsObservable(path))
-                            .mergeMap(fsObj => Rx.Observable.create(obs => {
-                                                                                _.extend(fsObj, {depth: _depth + 1});
-                                                                                obs.next(fsObj);
-                                                                                obs.complete();
-                                                                            }))
+                        .mergeMap(path => fileStatAsObservable(path))
+                        .mergeMap(fsObj => Rx.Observable.create(obs => {
+                                                                            _.extend(fsObj, {depth: _depth + 1});
+                                                                            obs.next(fsObj);
+                                                                            obs.complete();
+                                                                        }))
         }
         
         return readDirWithStatsAsObservable(path, 0)
-                        .expand(
-                            fsObj => (fsObj.stats.isDirectory() && fsObj.depth <= depth) ? readDirWithStatsAsObservable(fsObj.path, fsObj.depth) : Rx.Observable.empty()
-                        );
+                    .expand(
+                        fsObj => (fsObj.stats.isDirectory() && fsObj.depth <= depth) ? readDirWithStatsAsObservable(fsObj.path, fsObj.depth) : Rx.Observable.empty()
+                    );
     };
     var mkdirAsObservable = (path) => Rx.Observable.create(function(observer) {
         var cb = (e) => {
@@ -129,8 +128,8 @@
 
 
         return Rx.Observable.from(dirs)
-                        .scan((a, b) => a + '/' + b)
-                        .mergeMap(source, null, 1);
+                    .scan((a, b) => a + '/' + b)
+                    .mergeMap(source, null, 1);
                         
     };
     var rmdirAsObservable = (path) => Rx.Observable.create(function(observer) {
@@ -147,16 +146,24 @@
 
         var readDirWithStatsAsObservable = (path) => {
             return readDirAsObservable(path)
-                            .mergeMap(path => fileStatAsObservable(path));
+                        .mergeMap(path => fileStatAsObservable(path));
         }
+
         return readDirWithStatsAsObservable(path)
-                        .mergeMap(fsObj => fsObj.stats.isDirectory() ? forceRmdirAsObservable(fsObj.path) : rmFileAsObservable(fsObj.path))
-                        .concat(rmdirAsObservable(path));
+                    .mergeMap(fsObj => fsObj.stats.isDirectory() ? forceRmdirAsObservable(fsObj.path) : rmFileAsObservable(fsObj.path))
+                    .concat(rmdirAsObservable(path));
 
     };
 
         
     
+
+    var queryAsObservable = (path, name, depth) => {
+        return walkDirAsObservable(path, depth).filter((fsObj) => fsObj.name.indexOf(name) > -1);
+    };
+
+
+
     
     var rxfs = {
         fileStatAsObservable: fileStatAsObservable,
@@ -171,7 +178,9 @@
         mkdirAsObservable: mkdirAsObservable,
         forceMkdirAsObservable: forceMkdirAsObservable,
         rmdirAsObservable: rmdirAsObservable,
-        forceRmdirAsObservable: forceRmdirAsObservable
+        forceRmdirAsObservable: forceRmdirAsObservable,
+
+        queryAsObservable: queryAsObservable
     };
     
     if(typeof module !== 'undefined' && module.exports) {
