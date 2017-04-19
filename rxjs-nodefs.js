@@ -166,21 +166,21 @@
 
     
     var rxfs = {
-        fileStatAsObservable: fileStatAsObservable,
+        $$fileStat: fileStatAsObservable,
         
-        readFileAsObservable: readFileAsObservable,
-        writeFileAsObservable: writeFileAsObservable,
-        forceWriteFileAsObservable: forceWriteFileAsObservable,
-        rmFileAsObservable: rmFileAsObservable,
+        $$readFile: readFileAsObservable,
+        $$writeFile: writeFileAsObservable,
+        $$forceWriteFile: forceWriteFileAsObservable,
+        $$rmFile: rmFileAsObservable,
         
-        readDirAsObservable: readDirAsObservable,
-        walkDirAsObservable: walkDirAsObservable,
-        mkdirAsObservable: mkdirAsObservable,
-        forceMkdirAsObservable: forceMkdirAsObservable,
-        rmdirAsObservable: rmdirAsObservable,
-        forceRmdirAsObservable: forceRmdirAsObservable,
+        $$readDir: readDirAsObservable,
+        $$walkDir: walkDirAsObservable,
+        $$mkdir: mkdirAsObservable,
+        $$forceMkdir: forceMkdirAsObservable,
+        $$rmdir: rmdirAsObservable,
+        $$forceRmdir: forceRmdirAsObservable,
 
-        queryAsObservable: queryAsObservable
+        $$query: queryAsObservable
     };
     
     if(typeof module !== 'undefined' && module.exports) {

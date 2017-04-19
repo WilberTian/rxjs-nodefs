@@ -15,8 +15,8 @@ describe('dir api test', function() {
         console.log('clean up before test, folder: ' + tempDir)
     });
     
-    it('mkdirAsObservable - create a directory', function(done) {
-        rxfs.mkdirAsObservable(dirA)
+    it('$$mkdir - create a directory', function(done) {
+        rxfs.$$mkdir(dirA)
             .subscribe(x => {
                 expect(x).to.equal(dirA);
                 done();
@@ -26,8 +26,8 @@ describe('dir api test', function() {
         
     });
     
-    it('mkdirAsObservable - create a directory with a sub-directory', function(done) {
-        rxfs.mkdirAsObservable(dirB_C_D)
+    it('$$mkdir - create a directory with a sub-directory', function(done) {
+        rxfs.$$mkdir(dirB_C_D)
             .subscribe(x => {
             }, e => {
                 expect(e.code).to.equal('ENOENT');
@@ -36,10 +36,10 @@ describe('dir api test', function() {
         
     });
     
-    it('forceMkdirAsObservable - create a directory with directories include this directory', function(done) {
+    it('$$forceMkdir - create a directory with directories include this directory', function(done) {
         var dirs = [];
 
-        rxfs.forceMkdirAsObservable(dirB_C_D)
+        rxfs.$$forceMkdir(dirB_C_D)
             .subscribe(x => {
                 dirs.push(x)
             }, e => {
@@ -53,10 +53,10 @@ describe('dir api test', function() {
         
     });    
     
-    it('readDirAsObservable - list items in a directory', function(done) {
+    it('$$readDir - list items in a directory', function(done) {
         var items =[];
         
-        rxfs.readDirAsObservable(tempDir)
+        rxfs.$$readDir(tempDir)
             .subscribe(x => {
                 items.push(x);
             }, e => {
@@ -69,10 +69,10 @@ describe('dir api test', function() {
         
     });
     
-    it('walkDirAsObservable - walk a directory to list all the items and items in sub-directory', function(done) {
+    it('$$walkDir - walk a directory to list all the items and items in sub-directory', function(done) {
         var items =[];
         
-        rxfs.walkDirAsObservable(tempDir, 0)
+        rxfs.$$walkDir(tempDir, 0)
             .subscribe(x => {
                 items.push(x);
             }, e => {
@@ -85,10 +85,10 @@ describe('dir api test', function() {
         
     });
     
-    it('walkDirAsObservable - walk a directory to list all the items and items in sub-directory', function(done) {
+    it('$$walkDir - walk a directory to list all the items and items in sub-directory', function(done) {
         var items =[];
         
-        rxfs.walkDirAsObservable(tempDir, 2)
+        rxfs.$$walkDir(tempDir, 2)
             .subscribe(x => {
                 items.push(x);
             }, e => {
@@ -101,8 +101,8 @@ describe('dir api test', function() {
         
     });
     
-    it('rmdirAsObservable - delete an empty directory', function(done) {
-        rxfs.rmdirAsObservable(dirA)
+    it('$$rmdir - delete an empty directory', function(done) {
+        rxfs.$$rmdir(dirA)
             .subscribe(x => {
                 expect(x).to.equal(dirA);
                 done();
@@ -112,8 +112,8 @@ describe('dir api test', function() {
         
     });
        
-    it('rmdirAsObservable - delete an empty directory', function(done) {
-        rxfs.rmdirAsObservable(dirB)
+    it('$$rmdir - delete an empty directory', function(done) {
+        rxfs.$$rmdir(dirB)
             .subscribe(x => {
             }, e => {
                 expect(e.code).to.equal('ENOTEMPTY');
@@ -122,10 +122,10 @@ describe('dir api test', function() {
         
     });
 
-    it('forceRmdirAsObservable - force delete an directory and items in this directory', function(done) {
+    it('$$forceRmdir - force delete an directory and items in this directory', function(done) {
         var items =[];
         
-        rxfs.forceRmdirAsObservable(dirB)
+        rxfs.$$forceRmdir(dirB)
             .subscribe(x => {
                 items.push(x)
             }, e => {

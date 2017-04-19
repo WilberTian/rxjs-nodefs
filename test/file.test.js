@@ -23,8 +23,8 @@ describe('file api test', function() {
         console.log('clean up before test, folder: ' + tempDir)
     });
     
-    it('writeFileAsObservable - write/create file', function(done) {
-        rxfs.writeFileAsObservable(fileA.path, fileA.data)
+    it('$$writeFile - write/create file', function(done) {
+        rxfs.$$writeFile(fileA.path, fileA.data)
             .subscribe(x => {
                 expect(x.path).to.equal(fileA.path);
                 expect(x.data).to.equal(fileA.data);
@@ -34,8 +34,8 @@ describe('file api test', function() {
             }); 
     });
     
-    it('fileStatAsObservable - read file state', function(done) {
-        rxfs.fileStatAsObservable(fileA.path)
+    it('$$fileStat - read file state', function(done) {
+        rxfs.$$fileStat(fileA.path)
             .subscribe(x => {
                 expect(x.extension).to.equal(fileA.extension);
                 expect(x.name).to.equal(fileA.name);
@@ -46,8 +46,8 @@ describe('file api test', function() {
             }); 
     });
     
-    it('writeFileAsObservable - write/create file with none exist parent dir', function(done) {
-        rxfs.writeFileAsObservable(fileB.path, fileB.data)
+    it('$$writeFile - write/create file with none exist parent dir', function(done) {
+        rxfs.$$writeFile(fileB.path, fileB.data)
             .subscribe(x => {
             }, e => {
                 expect(e.code).to.equal('ENOENT');
@@ -55,8 +55,8 @@ describe('file api test', function() {
             }); 
     });
     
-    it('forceWriteFileAsObservable - write/create file and also create parent dir', function(done) {
-        rxfs.forceWriteFileAsObservable(fileB.path, fileB.data)
+    it('$$forceWriteFile - write/create file and also create parent dir', function(done) {
+        rxfs.$$forceWriteFile(fileB.path, fileB.data)
             .subscribe(x => {
                 expect(x.path).to.equal(fileB.path);
                 expect(x.data).to.equal(fileB.data);
@@ -66,8 +66,8 @@ describe('file api test', function() {
             }); 
     });
     
-    it('readFileAsObservable - read file', function(done) {
-        rxfs.readFileAsObservable(fileB.path)
+    it('$$readFile - read file', function(done) {
+        rxfs.$$readFile(fileB.path)
             .subscribe(x => {
                 expect(x).to.equal(fileB.data);
                 done();
@@ -76,8 +76,8 @@ describe('file api test', function() {
             }); 
     });
     
-    it('rmFileAsObservable - delete file', function(done) {
-        rxfs.rmFileAsObservable(fileB.path)
+    it('$$rmFile - delete file', function(done) {
+        rxfs.$$rmFile(fileB.path)
             .subscribe(x => {
                 expect(x).to.equal(fileB.path);
                 done();
